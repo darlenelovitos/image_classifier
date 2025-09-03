@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Classification App</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"], input[type="file"] {
+            padding: 10px;
+            margin: 5px 0 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+
+
+</head>
+<body>
+    <h1>Image Classification with Flask</h1>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul style="color:red;">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <h2>Step 1: Enter Class Names (comma separated)</h2>
+    <form method="POST">
+        <input type="text" name="class_names" placeholder="e.g. Alice, Bob, Charlie" size="50" required>
+        <button type="submit">Create Classes</button>
+    </form>
+
+    <hr>
+
+    <h2>Step 2: Upload Images for Each Class</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% if class_names %}
+            {% for c in class_names %}
+                <label>Upload images for class: <b>{{ c }}</b></label><br>
+                <input type="file" name="files_{{ c }}" multiple accept="image/*"><br><br>
+                <input type="hidden" name="classes" value="{{ c }}">
+            {% endfor %}
+            <button type="submit" name="upload_images">Upload Images</button>
+        {% else %}
+            <p>Please enter class names first.</p>
+        {% endif %}
+    </form>
+
+    <hr>
+
+    <h2>Step 3: Train Model</h2>
+    <form method="POST">
+        <button type="submit" name="train">Start Training</button>
+    </form>
+
+    <hr>
+
+    <h2>Step 4: Classify an Image</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="test_image" accept="image/*" required>
+        <button type="submit" name="classify">Classify</button>
+    </form>
+
+</body>
+</html>
